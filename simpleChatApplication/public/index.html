@@ -14,6 +14,12 @@
 	<p>Rtt time : <span id="rtt"></span> ms, ping = <span id="ping"></span> ms</p>
 	<p>Server time : <span id="serverTime"></span> seconds</p>
 	<p>Client time : <span id="clientTime"></span> seconds</p>
+
+	<p>Server heartbeat per seconds : <span id="heartbeat">10</span></p>
+	<!--<input id="heartbeat" style="width:200px;" />
+	<input type="button" id="changeHeartbeat" value="Change Value" />-->
+	<input type="number" id="heartbeat" name="heartbeat" min="0" max="40" value="10" oninput=changeHeartbeat(this.value)>
+	<input type="button" onclick="validateChange()" value="Change value">
 	<p>
 	<h1 id="lvl">Level 1</h1>
 	<p>

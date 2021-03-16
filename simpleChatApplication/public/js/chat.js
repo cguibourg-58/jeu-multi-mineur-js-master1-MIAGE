@@ -1,5 +1,5 @@
 let username;
-let conversation, data, datasend, users;
+let conversation, data, datasend, users, heartbeat;
 
 let artificialLatencyDelay=0;
 
@@ -105,7 +105,7 @@ function init() {
   });
 
   socket.on("heartbeat", () => {
-    //console.log("heartbeat");
+    console.log("heartbeat");
   });
  
   // we start the Game
@@ -124,4 +124,18 @@ function changeArtificialLatency(value) {
 
   let spanDelayValue = document.querySelector("#delay");
   spanDelayValue.innerHTML = artificialLatencyDelay;
+}
+
+function changeHeartbeat(value) {
+  heartbeat = parseInt(value);
+
+  //let heartbeatValue = document.querySelector("#heartbeat");
+  //heartbeatValue.innerHTML = heartbeat;
+}
+
+function validateChange() {
+  let heartbeatValue = document.querySelector("#heartbeat");
+  heartbeatValue.innerHTML = heartbeat;
+  console.log("heartbeat new value : "+heartbeat);
+  socket.emit("changeHeartbeat",heartbeat);
 }

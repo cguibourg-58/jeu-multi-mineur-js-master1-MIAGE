@@ -34,8 +34,16 @@ io.on('connection', (socket) => {
     },500);
 
 	setInterval(()=>{
-		socket.emit("heartbeat");
-	},1000/nbUpdatesPerSeconds)
+		socket.emit("heartbeat", (nbUpdatesPerSeconds));
+	},1000/nbUpdatesPerSeconds);
+
+	io.sockets.on("updateHeartbeat", function(socket) {
+		//console.log("new heartbeat value : "/*+heartbeat*/);
+		//socket.emit
+		socket.on("changeHeartbeat", function(data) {
+			nbUpdatesPerSeconds=data.value;
+		});
+	});
 
 	socket.on("pongo", () => { // "pong" is a reserved event name
 		let currentTime = Date.now();
