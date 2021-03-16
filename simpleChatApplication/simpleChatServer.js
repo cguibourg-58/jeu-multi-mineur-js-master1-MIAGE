@@ -21,6 +21,8 @@ app.get('/', (req, res) => {
 var playerNames = {};
 var listOfPlayers = {};
 
+var nbUpdatesPerSeconds = 10;
+
 io.on('connection', (socket) => {
 	let emitStamp;
 	let connectionStamp = Date.now();
@@ -30,6 +32,10 @@ io.on('connection', (socket) => {
         emitStamp = Date.now();
         socket.emit("ping");
     },500);
+
+	setInterval(()=>{
+		socket.emit("heartbeat");
+	},1000/nbUpdatesPerSeconds)
 
 	socket.on("pongo", () => { // "pong" is a reserved event name
 		let currentTime = Date.now();

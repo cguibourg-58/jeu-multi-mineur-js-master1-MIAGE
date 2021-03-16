@@ -103,6 +103,10 @@ function init() {
     spanClientTime.innerHTML = (serverTime/1000).toFixed(2);
   
   });
+
+  socket.on("heartbeat", () => {
+    //console.log("heartbeat");
+  });
  
   // we start the Game
   startGame();
