@@ -3,7 +3,15 @@ let conversation, data, datasend, users, heartbeat;
 
 let artificialLatencyDelay=0;
 
+var nbUpdatesPerSec;
+
+var nbClientUpdatesPerSeconds=10;
+
 let socket;
+
+var clientTime;
+
+//var clientTime;
 
 // on load of page
 window.onload = init;
@@ -95,18 +103,44 @@ function init() {
     spanPing.innerHTML = (rtt/2).toFixed(1);
 
     let spanServerTime = document.querySelector("#serverTime");
-    spanServerTime.innerHTML = (serverTime/1000).toFixed(2);
+    spanServerTime.innerHTML = (serverTime/1000).toFixed(5);
 
-    let clientTime = Date.now() - clientStartTimeAtConnection;
+    clientTime = Date.now() - clientStartTimeAtConnection;
 
     let spanClientTime = document.querySelector("#clientTime");
-    spanClientTime.innerHTML = (serverTime/1000).toFixed(2);
+    spanClientTime.innerHTML = (clientTime/1000).toFixed(5);
   
   });
 
-  socket.on("heartbeat", () => {
-    console.log("heartbeat");
+  socket.on("heartbeat", (nbUpdatesPerSeconds /*, posX*/) => {
+    //nbUpdatesPerSec=nbUpdatesPerSeconds;
+    //console.log("<< perseconds:"+nbUpdatesPerSeconds+"   perSec:"+nbUpdatesPerSec);
+    if(nbUpdatesPerSeconds!=nbUpdatesPerSec){
+      nbUpdatesPerSec = nbUpdatesPerSeconds;
+      console.log("<< update heartbeat : "+nbUpdatesPerSec);
+    }
+    let heartbeatValue = document.querySelector("#heartbeat");
+    heartbeatValue.innerHTML = nbUpdatesPerSec;
+    console.log("<< heartbeat : "+nbUpdatesPerSec);
   });
+/*
+  socket.on("heartbeat", (nbUpdatesPerSeconds, posX)=> {
+    //console.log("PosX : "+posX);
+  });
+  */
+
+  /*setInterval(()=>{
+		socket.emit("updateClient", username, clientTime,);
+	}, 1000/nbClientUpdatesPerSeconds);*/
+
+  /*socket.on("nbUpdatesPerSeconds", (nbUpdatesPerSeconds) => {
+    console.log("update heartbeat : "+nbUpdatesPerSec);
+  });
+
+  socket.on("initUpdatesPerSeconds", (nbUpdatesPerSeconds) => {
+    console.log("coucou je suis là alooooooooo ????");
+    nbUpdatesPerSec = nbUpdatesPerSeconds;
+  });*/
  
   // we start the Game
   startGame();
@@ -134,8 +168,6 @@ function changeHeartbeat(value) {
 }
 
 function validateChange() {
-  let heartbeatValue = document.querySelector("#heartbeat");
-  heartbeatValue.innerHTML = heartbeat;
-  console.log("heartbeat new value : "+heartbeat);
-  socket.emit("changeHeartbeat",heartbeat);
+  console.log(">> heartbeat new value : "+heartbeat);
+  socket.emit("changeNbUpdates",heartbeat);
 }

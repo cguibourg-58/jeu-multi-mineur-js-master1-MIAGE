@@ -1,4 +1,5 @@
-const express = require('express')
+const express = require('express');
+const { features } = require('process');
 const app = express();
 const http = require('http').Server(app);
 
@@ -21,7 +22,9 @@ app.get('/', (req, res) => {
 var playerNames = {};
 var listOfPlayers = {};
 
-var nbUpdatesPerSeconds = 10;
+var nbUpdatesPerSeconds=20;
+var heartbeatInterval;
+
 
 io.on('connection', (socket) => {
 	let emitStamp;
@@ -33,16 +36,23 @@ io.on('connection', (socket) => {
         socket.emit("ping");
     },500);
 
-	setInterval(()=>{
-		socket.emit("heartbeat", (nbUpdatesPerSeconds));
-	},1000/nbUpdatesPerSeconds);
+	//if(io.sockets.clients === 1) {
+		heartbeatStart(nbUpdatesPerSeconds);
+	//}
 
-	io.sockets.on("updateHeartbeat", function(socket) {
-		//console.log("new heartbeat value : "/*+heartbeat*/);
-		//socket.emit
-		socket.on("changeHeartbeat", function(data) {
-			nbUpdatesPerSeconds=data.value;
-		});
+	/*heartbeatInterval = setInterval(()=>{
+		socket.emit("heartbeat", (nbUpdatesPerSeconds));
+	}, 1000/nbUpdatesPerSeconds);*/
+	//heartbeatFunc(nbUpdatesPerSeconds);
+
+	socket.on("changeNbUpdates", (heartbeat) => {
+		nbUpdatesPerSeconds=heartbeat;
+		/*clearInterval(heartbeatInterval);
+		heartbeatInterval = setInterval(()=>{
+			socket.emit("heartbeat", (nbUpdatesPerSeconds));
+		}, 1000/nbUpdatesPerSeconds);*/
+		//heartbeatFunc(nbUpdatesPerSeconds);
+		heartbeatStart(nbUpdatesPerSeconds);
 	});
 
 	socket.on("pongo", () => { // "pong" is a reserved event name
@@ -67,6 +77,10 @@ io.on('connection', (socket) => {
 		//console.log("recu sendPos");
 		socket.broadcast.emit('updatepos', socket.username, newPos);
 	});
+
+	/*socket.on("updateClient", username, clientTime, posX, posY, speedX, speedy, ()=>{
+		socket.emit("heartbeat", nbUpdatesPerSeconds, posX);
+	});*/
 
 	// when the client emits 'adduser', this listens and executes
 	socket.on('adduser', (username) => {
@@ -107,5 +121,19 @@ io.on('connection', (socket) => {
 		
 		// echo globally that this client has left
 		socket.broadcast.emit('updatechat', 'SERVER', socket.username + ' has disconnected');
+	/*	if(io.sockets.clients.length === 0) {
+			heartbeatStop();
+		}*/
 	});
 });
+
+function heartbeatStop() {
+	clearInterval(heartbeatInterval);
+}
+
+function heartbeatStart(interval){
+	heartbeatStop();
+	heartbeatInterval = setInterval(()=>{
+		io.emit("heartbeat", (interval));
+	}, 1000/interval);
+}

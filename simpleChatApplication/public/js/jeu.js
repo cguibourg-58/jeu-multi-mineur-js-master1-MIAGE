@@ -12,6 +12,8 @@ let delta, oldTime = 0;
 
 var level = 1;
 
+var nbClientUpdatesPerSeconds=10;
+
 function startGame() {
   console.log("init");
   canvas = document.querySelector("#myCanvas");
@@ -156,12 +158,24 @@ function getMousePos(canvas, evt) {
   };
 }
 
+function updateClient() {
+  clientTime = document.querySelector("#clientTime");
+  clientTime*1000;
+  /*setInterval(()=>{
+    if (allPlayers[username] !== undefined) {
+      clientTime = document.querySelector("#clientTime");
+      clientTime*1000;
+      socket.emit("updateClient", username, clientTime, allPlayers[username].x, allPlayers[username].y, allPlayers[username].vx, allPlayers[username].vy);
+    }
+  }, clientTime);*/
+}
+
 function moveCurrentPlayer() {
   if (allPlayers[username] !== undefined) {
     allPlayers[username].x += calcDistanceToMove(delta, allPlayers[username].vx);
     allPlayers[username].y += calcDistanceToMove(delta, allPlayers[username].vy);
-
     socket.emit("sendpos", { user: username, pos: allPlayers[username]});
+    //updateClient();
   }
 }
 
