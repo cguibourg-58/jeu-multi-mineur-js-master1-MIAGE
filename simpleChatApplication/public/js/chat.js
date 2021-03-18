@@ -118,9 +118,11 @@ function init() {
     if(nbUpdatesPerSeconds!=nbUpdatesPerSec){
       nbUpdatesPerSec = nbUpdatesPerSeconds;
       console.log("<< update heartbeat : "+nbUpdatesPerSec);
+      let heartbeatValue = document.querySelector("#heartbeat");
+      heartbeatValue.innerHTML = nbUpdatesPerSec;
+      let heartbeatslider = document.querySelector("#heartbeatslider");
+      heartbeatslider.value = nbUpdatesPerSec;
     }
-    let heartbeatValue = document.querySelector("#heartbeat");
-    heartbeatValue.innerHTML = nbUpdatesPerSec;
     console.log("<< heartbeat : "+nbUpdatesPerSec);
   });
 /*
